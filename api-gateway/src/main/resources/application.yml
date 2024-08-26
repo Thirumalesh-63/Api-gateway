@@ -1,0 +1,40 @@
+server:
+  port: 8083  # Port for the API Gateway
+
+spring:
+  application:
+    name: api-gateway  # Application name for the API Gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: USERREGISTRY
+          uri: lb://USERREGISTRY  # Use 'lb://' to indicate load-balanced service
+          predicates:
+            - Path=/userregistry/**
+          filters:
+            - name: JwtAuthenticationFilter  # Apply JwtAuthenticationFilter
+
+        - id: SHIPMANAGEMENT
+          uri: lb://SHIPMANAGEMENT
+          predicates:
+            - Path=/shipmanagement/**
+          filters:
+            - name: JwtAuthenticationFilter  # Apply JwtAuthenticationFilter
+
+        - id: JWTSECURITY
+          uri: lb://JWTSECURITY
+          predicates:
+            - Path=/auth/**
+
+        - id: BOOKING
+          uri: lb://BOOKING
+          predicates:
+            - Path=/booking/**
+
+      discovery:
+        locator:
+          enabled: true  # Enable service discovery for dynamic routing
+
+  main:
+    web-application-type: reactive
